@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech205 | Cửa Hàng Điện Thoại Chính Hãng</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0F172A', // Slate 900
+                        accent: '#2563EB', // Blue 600
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles & Animations */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Carousel Transitions */
+        .carousel-item {
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+        }
+        .carousel-item.active {
+            opacity: 1;
+            z-index: 10;
+            transform: scale(1);
+        }
+        .carousel-item.inactive {
+            opacity: 0;
+            z-index: 0;
+            transform: scale(1.05);
+        }
+
+        /* Hide scrollbar for category list on mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Chatbot Animations */
+        .chat-open {
+            display: flex !important;
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            pointer-events: auto;
+        }
+        .chat-closed {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+        
+        .typing-dot {
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body id="top" class="bg-gray-50 text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-100 shadow-sm transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer">
+                    <span class="text-2xl font-bold text-primary tracking-tight">Tech<span class="text-accent">205</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#top" class="text-gray-900 hover:text-accent font-medium transition-colors">Trang chủ</a>
+                    <a href="#products" class="text-gray-600 hover:text-accent font-medium transition-colors">Điện thoại</a>
+                    <a href="#categories" class="text-gray-600 hover:text-accent font-medium transition-colors">Phụ kiện</a>
+                    <a href="#about" class="text-gray-600 hover:text-accent font-medium transition-colors">Về chúng tôi</a>
+                </div>
+
+                <!-- Icons (Search, Cart) -->
+                <div class="hidden md:flex items-center space-x-5">
+                    <button class="text-gray-500 hover:text-accent transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </button>
+                    <button class="text-gray-500 hover:text-accent transition-colors relative">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        <span class="absolute -top-1 -right-2 bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span>
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-500 hover:text-primary focus:outline-none">
+                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 shadow-lg">
+                <a href="#top" class="block px-3 py-2 text-primary font-medium">Trang chủ</a>
+                <a href="#products" class="block px-3 py-2 text-gray-600 hover:text-primary font-medium">Điện thoại</a>
+                <a href="#categories" class="block px-3 py-2 text-gray-600 hover:text-primary font-medium">Phụ kiện</a>
+                <a href="#about" class="block px-3 py-2 text-gray-600 hover:text-primary font-medium">Về chúng tôi</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section / Carousel -->
+    <div class="relative h-[85vh] w-full overflow-hidden bg-black pt-16">
+        <!-- Slide 1 -->
+        <div class="carousel-item active absolute inset-0 w-full h-full">
+            <div class="absolute inset-0 bg-black/40 z-10"></div>
+            <img src="https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&q=80&w=2000" alt="iPhone 17 Pro Max" class="absolute w-full h-full object-cover object-center" />
+            <div class="absolute inset-0 z-20 flex flex-col justify-center items-center text-center px-4">
+                <p class="bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent font-extrabold tracking-[0.2em] text-xl md:text-2xl uppercase mb-3 drop-shadow-lg">Siêu phẩm mới</p>
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">iPhone 17 Pro Max</h1>
+                <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl">Thiết kế viền nhôm nguyên khối bền bỉ. Nâng tầm trải nghiệm với Apple Intelligence và sức mạnh từ chip A19 Pro.</p>
+                <a href="#products" class="bg-white text-primary px-8 py-3 rounded-full font-medium hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-lg">Mua Ngay</a>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-item inactive absolute inset-0 w-full h-full">
+            <div class="absolute inset-0 bg-black/50 z-10"></div>
+            <img src="https://images.unsplash.com/photo-1707343843437-caacff5cfa74?auto=format&fit=crop&q=80&w=2000" alt="Samsung Galaxy S26 Ultra" class="absolute w-full h-full object-cover object-center" />
+            <div class="absolute inset-0 z-20 flex flex-col justify-center items-center text-center px-4">
+                <p class="bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent font-extrabold tracking-[0.2em] text-xl md:text-2xl uppercase mb-3 drop-shadow-lg">Đột phá AI</p>
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">Galaxy S26 Ultra</h1>
+                <p class="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl">Camera 200MP bắt trọn mọi khoảnh khắc với độ sắc nét tuyệt đối. Kỷ nguyên mới của Galaxy AI.</p>
+                <a href="#products" class="bg-accent text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition-all duration-300 hover:scale-105 shadow-lg">Khám Phá</a>
+            </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <button id="prevSlide" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors backdrop-blur-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <button id="nextSlide" class="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-white/20 text-white hover:bg-white/40 transition-colors backdrop-blur-sm">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+
+        <!-- Carousel Indicators -->
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex space-x-2">
+            <button class="indicator w-2 h-2 rounded-full bg-white transition-all w-8"></button>
+            <button class="indicator w-2 h-2 rounded-full bg-white/50 transition-all"></button>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Feature 1 -->
+                <div class="flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="bg-blue-50 p-3 rounded-full text-accent">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900">Giao hàng miễn phí</h4>
+                        <p class="text-sm text-gray-500">Cho mọi đơn hàng</p>
+                    </div>
+                </div>
+                <!-- Feature 2 -->
+                <div class="flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="bg-blue-50 p-3 rounded-full text-accent">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900">Bảo hành 12 tháng</h4>
+                        <p class="text-sm text-gray-500">Chính hãng 100%</p>
+                    </div>
+                </div>
+                <!-- Feature 3 -->
+                <div class="flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="bg-blue-50 p-3 rounded-full text-accent">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900">Thanh toán an toàn</h4>
+                        <p class="text-sm text-gray-500">Hỗ trợ trả góp 0%</p>
+                    </div>
+                </div>
+                <!-- Feature 4 -->
+                <div class="flex items-center space-x-4 p-4 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="bg-blue-50 p-3 rounded-full text-accent">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900">Hỗ trợ 24/7</h4>
+                        <p class="text-sm text-gray-500">Luôn đồng hành</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-bold text-primary mb-8">Danh mục nổi bật</h2>
+            <div class="flex overflow-x-auto space-x-4 pb-4 no-scrollbar">
+                <!-- Category 1 -->
+                <div class="flex-none w-32 h-32 md:w-40 md:h-40 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all group">
+                    <svg class="w-10 h-10 mb-3 text-gray-400 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <span class="font-medium text-gray-700 group-hover:text-primary">iPhone</span>
+                </div>
+                <!-- Category 2 -->
+                <div class="flex-none w-32 h-32 md:w-40 md:h-40 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all group">
+                    <svg class="w-10 h-10 mb-3 text-gray-400 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <span class="font-medium text-gray-700 group-hover:text-primary">Samsung</span>
+                </div>
+                <!-- Category 3 -->
+                <div class="flex-none w-32 h-32 md:w-40 md:h-40 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all group">
+                    <svg class="w-10 h-10 mb-3 text-gray-400 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <span class="font-medium text-gray-700 group-hover:text-primary">Oppo</span>
+                </div>
+                <!-- Category 4 -->
+                <div class="flex-none w-32 h-32 md:w-40 md:h-40 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all group">
+                    <svg class="w-10 h-10 mb-3 text-gray-400 group-hover:text-accent transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <span class="font-medium text-gray-700 group-hover:text-primary">Xiaomi</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Products -->
+    <section id="products" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-end mb-10">
+                <div>
+                    <h2 class="text-3xl font-bold text-primary mb-2">Sản phẩm bán chạy</h2>
+                    <p class="text-gray-500">Những mẫu điện thoại được yêu thích nhất tháng này.</p>
+                </div>
+                <a href="#" class="hidden sm:inline-block text-accent font-medium hover:underline">Xem tất cả &rarr;</a>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Product 1 -->
+                <div class="group bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-xl transition-all duration-300 relative">
+                    <div class="absolute top-4 left-4 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded z-10">-5%</div>
+                    <div class="relative h-64 bg-gray-50 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                        <img src="https://cdn1.viettelstore.vn/Images/Product/ProductImage/1616426237.jpeg" alt="iPhone 17 Pro Max" class="h-48 object-contain group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-1 line-clamp-1"><a href="#">iPhone 17 Pro Max 256GB</a></h3>
+                        <p class="text-gray-500 text-sm mb-3">Khung nhôm - Trắng</p>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xl font-bold text-primary">33.990.000₫</span>
+                                <span class="text-sm text-gray-400 line-through block">35.990.000₫</span>
+                            </div>
+                            <button class="bg-primary hover:bg-accent text-white p-2 rounded-full transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="group bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-xl transition-all duration-300 relative">
+                    <div class="relative h-64 bg-gray-50 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                        <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:0:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/s/a/samsung-galaxy-s26-ultra-11.jpg" alt="Samsung Galaxy S26 Ultra" class="h-48 object-contain group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-1 line-clamp-1"><a href="#">Samsung Galaxy S26 Ultra</a></h3>
+                        <p class="text-gray-500 text-sm mb-3">Nhôm Armor Aluminum - Xám</p>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xl font-bold text-primary">31.990.000₫</span>
+                            </div>
+                            <button class="bg-primary hover:bg-accent text-white p-2 rounded-full transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="group bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-xl transition-all duration-300 relative">
+                    <div class="absolute top-4 left-4 bg-accent text-white text-xs font-bold px-2 py-1 rounded z-10">Mới</div>
+                    <div class="relative h-64 bg-gray-50 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                        <img src="https://cdn.mobilecity.vn/mobilecity-vn/images/2025/09/xiaomi-17-pro-tim.jpg.webp" alt="Xiaomi 17 Pro" class="h-48 object-contain group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-1 line-clamp-1"><a href="#">Xiaomi 17 Pro 5G</a></h3>
+                        <p class="text-gray-500 text-sm mb-3">Khung nhôm phẳng - Tím</p>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xl font-bold text-primary">25.490.000₫</span>
+                            </div>
+                            <button class="bg-primary hover:bg-accent text-white p-2 rounded-full transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="group bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-xl transition-all duration-300 relative">
+                    <div class="relative h-64 bg-gray-50 rounded-xl mb-4 overflow-hidden flex items-center justify-center">
+                        <img src="https://cdn.mobilecity.vn/mobilecity-vn/images/2025/10/oppo-find-x9-do.jpg" alt="Oppo Find X9" class="h-48 object-contain group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-1 line-clamp-1"><a href="#">Oppo Find X9</a></h3>
+                        <p class="text-gray-500 text-sm mb-3">Hộp kim nhôm, lưng kính Panda - Đỏ</p>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xl font-bold text-primary">22.990.000₫</span>
+                                <span class="text-sm text-gray-400 line-through block">24.990.000₫</span>
+                            </div>
+                            <button class="bg-primary hover:bg-accent text-white p-2 rounded-full transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 text-center sm:hidden">
+                <a href="#" class="inline-block border border-gray-300 px-6 py-2 rounded-full text-gray-700 font-medium hover:bg-gray-50 transition-colors">Xem tất cả sản phẩm</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promo Banner -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="relative rounded-3xl overflow-hidden bg-primary">
+                <div class="absolute inset-0 z-0 opacity-40">
+                    <img src="https://images.unsplash.com/photo-1556656793-08538906a9f8?auto=format&fit=crop&q=80&w=1200" alt="Tech Store" class="w-full h-full object-cover">
+                </div>
+                <div class="relative z-10 p-8 md:p-16 md:w-2/3 lg:w-1/2">
+                    <span class="bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent font-extrabold tracking-[0.2em] text-2xl md:text-3xl uppercase mb-4 block drop-shadow-lg">Ưu đãi đặc biệt</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Lên Đời Điện Thoại, Trợ Giá Lên Đến 3 Triệu</h2>
+                    <p class="text-gray-300 mb-8">Tham gia chương trình thu cũ đổi mới tại Tech205 ngay hôm nay. Thủ tục nhanh gọn, trợ giá tốt nhất thị trường.</p>
+                    <a href="#" class="inline-block bg-accent hover:bg-blue-700 text-white px-6 py-3 rounded-full font-medium transition-colors">Xem chi tiết chương trình</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="about" class="bg-primary text-gray-300 pt-16 pb-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-12">
+                <!-- Brand -->
+                <div class="col-span-1 md:col-span-1">
+                    <div class="text-2xl font-bold text-white tracking-tight mb-4">Tech<span class="text-accent">205</span></div>
+                    <p class="text-sm text-gray-400 leading-relaxed mb-6">Điểm đến tin cậy cho những tín đồ công nghệ. Cung cấp sản phẩm chính hãng với dịch vụ hậu mãi hàng đầu.</p>
+                    <div class="flex space-x-4">
+                        <!-- Facebook Icon -->
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.597 0 0 .597 0 1.325v21.351C0 23.403.597 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.597 1.323-1.324V1.325C24 .597 23.403 0 22.675 0z"/></svg>
+                        </a>
+                        <!-- YouTube Icon -->
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Links -->
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Sản phẩm</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-accent transition-colors">Điện thoại iPhone</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Điện thoại Samsung</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Điện thoại Xiaomi</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Điện thoại Oppo</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Hỗ trợ khách hàng</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-accent transition-colors">Chính sách bảo hành</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Chính sách đổi trả</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Hướng dẫn mua trả góp</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Tra cứu đơn hàng</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Liên hệ</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 mr-2 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span>828 Sư Vạn Hạnh, Phường Hòa Hưng, TP. Hồ Chí Minh</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                            <span>0964 987 951</span>
+                        </li>
+                        <li class="flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            <span>ptpit369@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <p>&copy; 2026 Tech205. All rights reserved.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-white transition-colors">Điều khoản</a>
+                    <a href="#" class="hover:text-white transition-colors">Bảo mật</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ✨ AI Chatbot Widget -->
+    <!-- Toggle Button -->
+    <button id="chatbot-toggle" class="fixed bottom-6 right-6 bg-accent hover:bg-blue-700 text-white rounded-full p-4 shadow-2xl transition-transform hover:scale-110 z-[100] flex items-center justify-center">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+    </button>
+
+    <!-- Chat Window -->
+    <div id="chatbot-modal" class="chat-closed fixed bottom-24 right-6 w-[350px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl z-[100] flex-col overflow-hidden border border-gray-100 transition-all duration-300 transform origin-bottom-right">
+        <!-- Header -->
+        <div class="bg-primary text-white p-4 flex justify-between items-center shadow-sm relative z-10">
+            <div class="flex items-center space-x-2">
+                <span class="text-xl">✨</span>
+                <div>
+                    <h3 class="font-bold text-sm">Tech205 AI</h3>
+                    <p class="text-[10px] text-gray-300">Trợ lý mua sắm thông minh</p>
+                </div>
+            </div>
+            <button id="chatbot-close" class="text-gray-400 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <!-- Chat Area -->
+        <div id="chat-messages" class="p-4 h-80 overflow-y-auto bg-gray-50 flex flex-col space-y-4">
+            <!-- Greeting Message -->
+            <div class="flex items-start max-w-[85%]">
+                <div class="bg-blue-50 border border-blue-100 text-gray-800 p-3 rounded-2xl rounded-tl-sm text-sm shadow-sm">
+                    Xin chào! 👋 Mình là ✨ Trợ lý AI của Tech205. Bạn đang cần tìm điện thoại theo tiêu chí nào (chơi game, chụp ảnh, pin trâu) hoặc mức giá bao nhiêu ạ?
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-3 bg-white border-t border-gray-100">
+            <form id="chat-form" class="flex space-x-2 relative">
+                <input type="text" id="chat-input" class="flex-1 bg-gray-100 border-transparent rounded-full pl-4 pr-10 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:bg-white transition-colors" placeholder="Nhắn tin cho AI..." autocomplete="off" required>
+                <button type="submit" id="chat-submit" class="absolute right-1 top-1 bottom-1 bg-accent hover:bg-blue-700 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg class="w-4 h-4 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Navbar blur and shrink effect on scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.remove('py-2');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.add('py-2');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Hero Carousel Logic
+        const slides = document.querySelectorAll('.carousel-item');
+        const indicators = document.querySelectorAll('.indicator');
+        const nextBtn = document.getElementById('nextSlide');
+        const prevBtn = document.getElementById('prevSlide');
+        let currentSlide = 0;
+        let slideInterval;
+
+        function goToSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add('inactive');
+            
+            if (indicators.length > 0) {
+                indicators[currentSlide].classList.remove('w-8', 'bg-white');
+                indicators[currentSlide].classList.add('bg-white/50');
+            }
+
+            currentSlide = (index + slides.length) % slides.length;
+
+            slides[currentSlide].classList.remove('inactive');
+            slides[currentSlide].classList.add('active');
+            
+            if (indicators.length > 0) {
+                indicators[currentSlide].classList.remove('bg-white/50');
+                indicators[currentSlide].classList.add('w-8', 'bg-white');
+            }
+        }
+
+        function nextSlide() { goToSlide(currentSlide + 1); }
+        function prevSlide() { goToSlide(currentSlide - 1); }
+
+        nextBtn.addEventListener('click', () => { nextSlide(); resetInterval(); });
+        prevBtn.addEventListener('click', () => { prevSlide(); resetInterval(); });
+
+        indicators.forEach((indicator, index) => {
+            indicator.addEventListener('click', () => {
+                goToSlide(index);
+                resetInterval();
+            });
+        });
+
+        function startInterval() { slideInterval = setInterval(nextSlide, 5000); }
+        function resetInterval() { clearInterval(slideInterval); startInterval(); }
+        startInterval();
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    menu.classList.add('hidden');
+                    window.scrollTo({
+                        top: target.offsetTop - 64,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // ==========================================
+        // ✨ GEMINI API CHATBOT LOGIC
+        // ==========================================
+        
+        // Gemini Configuration
+        const apiKey = ""; // API key will be injected by the environment
+        const model = "gemini-2.5-flash-preview-09-2025";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+        // Chat UI Elements
+        const chatToggleBtn = document.getElementById('chatbot-toggle');
+        const chatModal = document.getElementById('chatbot-modal');
+        const chatCloseBtn = document.getElementById('chatbot-close');
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatSubmitBtn = document.getElementById('chat-submit');
+
+        // Conversation state for Gemini API
+        let chatHistory = [];
+
+        // System Instruction context for the AI
+        const systemInstruction = `Bạn là Trợ lý AI ✨ của cửa hàng điện thoại Tech205. Hãy đóng vai một nhân viên tư vấn nhiệt tình, thân thiện, và chuyên nghiệp.
+        
+Thông tin cửa hàng Tech205:
+- Danh mục bán: Điện thoại iPhone, Samsung, Oppo, Xiaomi.
+- Sản phẩm nổi bật hiện có: 
+  1. iPhone 17 Pro Max 256GB (Khung nhôm nguyên khối, Trắng): 33.990.000₫ (Đang giảm từ 35.990.000₫).
+  2. Samsung Galaxy S26 Ultra (Titanium Xám): 31.990.000₫ (Đột phá AI, Camera 200MP).
+  3. Xiaomi 17 Pro 5G (Ống kính Leica): 25.490.000₫.
+  4. Oppo Find X9 (Mặt lưng da cao cấp): 22.990.000₫ (Giảm từ 24.990.000₫).
+- Chính sách: Giao hàng miễn phí, Bảo hành 12 tháng chính hãng, Hỗ trợ trả góp 0%, Thu cũ đổi mới trợ giá tới 3 triệu, Hỗ trợ 24/7.
+- Liên hệ: 0964 987 951, 828 Sư Vạn Hạnh, Phường Hòa Hưng, TP. Hồ Chí Minh.
+- Email hỗ trợ: ptpit369@gmail.com
+
+Nhiệm vụ của bạn:
+- Giúp khách hàng chọn điện thoại theo nhu cầu (chơi game, chụp ảnh, pin, tầm giá).
+- Trả lời ngắn gọn, súc tích (dưới 4 câu) vì bạn đang chat trong khung nhỏ.
+- Luôn sử dụng emoji để cuộc trò chuyện thân thiện hơn.
+- Không bao giờ bịa ra sản phẩm không có trong danh sách trên, nếu họ hỏi sản phẩm khác, hãy xin lỗi và giới thiệu các máy hiện có.
+- Định dạng chữ đậm **chữ** để làm nổi bật tên máy hoặc giá tiền.`;
+
+        // Toggle Chat Window
+        chatToggleBtn.addEventListener('click', () => {
+            chatModal.classList.remove('chat-closed');
+            chatModal.classList.add('chat-open');
+            chatInput.focus();
+        });
+
+        chatCloseBtn.addEventListener('click', () => {
+            chatModal.classList.remove('chat-open');
+            chatModal.classList.add('chat-closed');
+        });
+
+        // Add message to UI
+        function appendMessage(text, sender) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex items-start ${sender === 'user' ? 'justify-end' : ''} mb-4`;
+            
+            const msgBox = document.createElement('div');
+            // Basic markdown bold formatting replacing **text** with <b>text</b>
+            const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+
+            if (sender === 'user') {
+                msgBox.className = 'bg-accent text-white p-3 rounded-2xl rounded-tr-sm text-sm shadow-sm max-w-[85%] break-words';
+                msgBox.innerHTML = formattedText;
+            } else if (sender === 'model') {
+                msgBox.className = 'bg-blue-50 border border-blue-100 text-gray-800 p-3 rounded-2xl rounded-tl-sm text-sm shadow-sm max-w-[85%] break-words leading-relaxed';
+                msgBox.innerHTML = formattedText;
+            } else if (sender === 'error') {
+                msgBox.className = 'bg-red-50 text-red-600 p-3 rounded-2xl text-xs text-center w-full border border-red-100';
+                msgBox.innerHTML = text;
+            }
+            
+            wrapper.appendChild(msgBox);
+            chatMessages.appendChild(wrapper);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Show typing indicator
+        function showTypingIndicator() {
+            const wrapper = document.createElement('div');
+            wrapper.id = 'typing-indicator';
+            wrapper.className = 'flex items-start mb-4';
+            
+            wrapper.innerHTML = `
+                <div class="bg-gray-100 p-4 rounded-2xl rounded-tl-sm shadow-sm flex space-x-1.5">
+                    <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                </div>
+            `;
+            chatMessages.appendChild(wrapper);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        // Fetch with Exponential Backoff
+        async function fetchWithBackoff(url, options, maxRetries = 5) {
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        if (response.status === 429 || response.status >= 500) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const errorText = await response.text();
+                        throw new Error(`Lỗi hệ thống: ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                }
+            }
+        }
+
+        // Handle Form Submission
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageText = chatInput.value.trim();
+            if (!messageText) return;
+
+            // 1. UI Updates (User Message)
+            appendMessage(messageText, 'user');
+            chatInput.value = '';
+            chatInput.disabled = true;
+            chatSubmitBtn.disabled = true;
+            
+            // 2. Add to History
+            chatHistory.push({ role: "user", parts: [{ text: messageText }] });
+            
+            showTypingIndicator();
+
+            try {
+                // 3. Prepare Payload
+                const payload = {
+                    systemInstruction: { parts: [{ text: systemInstruction }] },
+                    contents: chatHistory
+                };
+
+                // 4. Call Gemini API
+                const result = await fetchWithBackoff(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                removeTypingIndicator();
+
+                // 5. Handle Response
+                if (result.candidates && result.candidates[0].content) {
+                    const aiText = result.candidates[0].content.parts[0].text;
+                    appendMessage(aiText, 'model');
+                    chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+                } else {
+                    throw new Error("Không thể xử lý dữ liệu phản hồi.");
+                }
+
+            } catch (error) {
+                removeTypingIndicator();
+                appendMessage("Rất tiếc, AI đang bận hoặc có lỗi kết nối. Vui lòng thử lại sau nhé! 😥", 'error');
+                // Remove the failed user message from history so they can retry smoothly
+                chatHistory.pop();
+                console.error("Gemini API Error:", error);
+            } finally {
+                chatInput.disabled = false;
+                chatSubmitBtn.disabled = false;
+                chatInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>
